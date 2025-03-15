@@ -139,7 +139,8 @@ if usuario_id and filtrar:
     if not historico_usuario.empty:
         consumo_dia = historico_usuario.groupby("data")["quantidade_ml"].sum().reset_index()
         fig_dia = px.bar(consumo_dia, x="data", y="quantidade_ml", title="Consumo Total por Dia")
-        st.plotly_chart(fig_dia, text_auto=True)
+        fig_dia.update_traces(texttemplate='%{y}', textposition='outside')  
+        st.plotly_chart(fig_dia)
 
         historico_usuario["hora"] = historico_usuario["data_hora"].dt.hour
         todas_horas = pd.DataFrame({"hora": list(range(24))})
@@ -147,7 +148,8 @@ if usuario_id and filtrar:
         media_hora = todas_horas.merge(media_hora, on="hora", how="left").fillna(0)
 
         fig_media_hora = px.bar(media_hora, x="hora", y="quantidade_ml", title="Média de Consumo por Hora")
-        st.plotly_chart(fig_media_hora, text_auto=True)
+        fig_media_hora.update_traces(texttemplate='%{y}', textposition='outside')  
+        st.plotly_chart(fig_media_hora)
 
         # st.dataframe(historico_usuario)
     else:
