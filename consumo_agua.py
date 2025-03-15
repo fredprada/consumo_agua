@@ -44,15 +44,15 @@ filtrar = st.button("🔍 Filtrar")
 
 # 2️⃣ Input de consumo
 st.subheader("➕ Registrar Consumo")
-usuario_manual = st.text_input("Usuário:", "")
+usuario_manual = st.text_input("Usuário: (preencha caso seu usuario nao exista, senao deixe vazio)", "")
 
 medidas = {
     "Gole (30ml)": 30, "Copo pequeno (100ml)": 100, "Copo grande (200ml)": 200,
     "Garrafa pequena (500ml)": 500, "Garrafa grande (1L)": 1000, "Mililitros (digite abaixo)": None,
 }
 
-medida = st.selectbox("Selecione a medida:", list(medidas.keys()))
 qtd_medida = st.number_input("Quantidade:", min_value=1, step=1, value=1)
+medida = st.selectbox("Selecione a medida:", list(medidas.keys()))
 quantidade_ml = (medidas[medida] if medidas[medida] else st.number_input("Digite a quantidade em ml:", min_value=1, step=1)) * qtd_medida
 
 usuario_id = usuario_manual if usuario_manual else usuario_selecionado
@@ -139,7 +139,7 @@ if usuario_id and filtrar:
     if not historico_usuario.empty:
         consumo_dia = historico_usuario.groupby("data")["quantidade_ml"].sum().reset_index()
         fig_dia = px.bar(consumo_dia, x="data", y="quantidade_ml", title="Consumo Total por Dia")
-        st.plotly_chart(fig_dia)
+        st.plotly_chart(fig_dia, text_auto=True)
 
         historico_usuario["hora"] = historico_usuario["data_hora"].dt.hour
         todas_horas = pd.DataFrame({"hora": list(range(24))})
@@ -147,8 +147,8 @@ if usuario_id and filtrar:
         media_hora = todas_horas.merge(media_hora, on="hora", how="left").fillna(0)
 
         fig_media_hora = px.bar(media_hora, x="hora", y="quantidade_ml", title="Média de Consumo por Hora")
-        st.plotly_chart(fig_media_hora)
+        st.plotly_chart(fig_media_hora, text_auto=True)
 
-        st.dataframe(historico_usuario)
+        # st.dataframe(historico_usuario)
     else:
         st.write("Nenhum registro encontrado para este usuário.")
