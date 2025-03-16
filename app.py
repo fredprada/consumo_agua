@@ -10,7 +10,7 @@ from PIL import Image
 st.set_page_config(page_title="Pedrito, o Fiscal da Hidratação", page_icon="🚰", layout="wide")
 
 # Carregar e exibir a imagem do Pedrito
-pedrito_img = Image.open("pedrito.jpg")
+pedrito_img = Image.open("assets/pedrito.jpg")
 st.image(pedrito_img, width=150)
 st.title("💧 Pedrito, o Fiscal da Hidratação")
 
