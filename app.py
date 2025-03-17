@@ -6,6 +6,7 @@ import plotly.graph_objects as go
 from datetime import datetime
 import pytz
 from PIL import Image
+from datetime import timedelta
 
 # 🔧 Configuração da página
 st.set_page_config(page_title="Pedrito, o Fiscal da Hidratação", page_icon="🚰", layout="wide")
@@ -163,3 +164,27 @@ if usuario_id and filtrar:
         st.plotly_chart(fig_hora)
     else:
         st.write("Nenhum registro encontrado para este usuário.")
+
+    # 📊 Ranking Semanal
+    st.subheader("🏆 Ranking Semanal de Consumo")
+    inicio_semana = hoje - timedelta(days=hoje.weekday())  # Segunda-feira da semana atual
+    consumo_semana = historico[historico["data"] >= inicio_semana].groupby("usuario_id")["quantidade_ml"].sum().reset_index()
+    consumo_semana["quantidade_litros"] = consumo_semana["quantidade_ml"] / 1000
+    consumo_semana = consumo_semana.sort_values("quantidade_litros", ascending=False).reset_index(drop=True)
+    consumo_semana.index += 1  # Ajustar para ranking começar em 1
+
+    st.table(consumo_semana[["usuario_id", "quantidade_litros"]].rename(columns={"usuario_id": "Usuário", "quantidade_litros": "Litros Consumidos"}))
+
+    # 📅 Dias de Ofensiva
+    st.subheader("🔥 Dias de Ofensiva")
+    historico_usuario = historico[historico["usuario_id"] == usuario_id].groupby("data")["quantidade_ml"].sum().reset_index()
+    historico_usuario["atingiu_meta"] = historico_usuario["quantidade_ml"] >= META_DIARIA
+
+    dias_ofensiva = 0
+    for _, row in historico_usuario[::-1].iterrows():  # Inverter para contar do presente para o passado
+        if row["atingiu_meta"]:
+            dias_ofensiva += 1
+        else:
+            break
+
+    st.metric("Dias de Ofensiva", dias_ofensiva)
