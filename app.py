@@ -173,7 +173,7 @@ if usuario_id and filtrar:
             y=consumo_acumulado_hoje.values,
             mode='lines+markers',
             name='Hoje',
-            line=dict(color='blue')
+            line=dict(color='#1f77b4')
         ))
 
         # Linha da média acumulada histórica
