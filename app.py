@@ -169,7 +169,8 @@ if usuario_id and filtrar:
     st.subheader("🏆 Ranking Semanal de Consumo")
     inicio_semana = hoje - timedelta(days=hoje.weekday())  # Segunda-feira da semana atual
     consumo_semana = historico[historico["data"] >= inicio_semana].groupby("usuario_id")["quantidade_ml"].sum().reset_index()
-    consumo_semana["quantidade_litros"] = round(consumo_semana["quantidade_ml"] / 1000, 1)
+    consumo_semana["quantidade_litros"] = consumo_semana["quantidade_ml"] / 1000
+    consumo_semana["quantidade_litros"] = consumo_semana["quantidade_litros"].apply(lambda x: f"{x:.1f}")
     consumo_semana = consumo_semana.sort_values("quantidade_litros", ascending=False).reset_index(drop=True)
     consumo_semana.index += 1  # Ajustar para ranking começar em 1
 
