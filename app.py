@@ -87,19 +87,19 @@ if usuario_id and st.button("Registrar"):
     else:
         st.error("Erro ao registrar consumo.")
 
-    # 📅 Dias de Ofensiva
-    st.subheader("🔥 Dias de Ofensiva")
-    historico_usuario = historico[historico["usuario_id"] == usuario_id].groupby("data")["quantidade_ml"].sum().reset_index()
-    historico_usuario["atingiu_meta"] = historico_usuario["quantidade_ml"] >= META_DIARIA
+# 📅 Dias de Ofensiva
+st.subheader("🔥 Dias de Ofensiva")
+historico_usuario = historico[historico["usuario_id"] == usuario_id].groupby("data")["quantidade_ml"].sum().reset_index()
+historico_usuario["atingiu_meta"] = historico_usuario["quantidade_ml"] >= META_DIARIA
 
-    dias_ofensiva = 0
-    for _, row in historico_usuario[::-1].iterrows():  # Inverter para contar do presente para o passado
-        if row["atingiu_meta"]:
-            dias_ofensiva += 1
-        else:
-            break
+dias_ofensiva = 0
+for _, row in historico_usuario[::-1].iterrows():  # Inverter para contar do presente para o passado
+    if row["atingiu_meta"]:
+        dias_ofensiva += 1
+    else:
+        break
 
-    st.metric("Dias de Ofensiva", dias_ofensiva)
+st.metric("Dias de Ofensiva", dias_ofensiva)
 
 # 3️⃣ Indicadores de Consumo
 META_DIARIA = 3000  # Meta de consumo (ml)
