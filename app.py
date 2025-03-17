@@ -155,30 +155,20 @@ if usuario_id and filtrar:
         st.plotly_chart(fig_hora)
 
 
-        # ⏳ Gráfico: Consumo acumulado por hora hoje x média
+        # ⏳ Gráfico: Consumo Acumulado por Hora (Hoje x Média)
+        st.subheader("⏳ Consumo Acumulado por Hora")
+
         today = datetime.now(UTC_MINUS_3).date()
 
-        # Filtrar os dados, excluindo o dia atual para calcular a média histórica
-        historico_passado = historico[historico["data"] < today]
-
-        # Calcular a média histórica do consumo por hora
-        media_historica_por_hora = historico_passado.groupby("hora")["quantidade_ml"].mean()
-
-        # Calcular a média acumulada ao longo das horas
-        media_acumulada_historica = media_historica_por_hora.cumsum()
-
-        # Filtrar os dados do dia atual
-        historico_hoje = historico[historico["data"] == today]
-
-        # Calcular o consumo acumulado de hoje por hora
-        consumo_por_hora = historico_hoje.groupby("hora")["quantidade_ml"].sum()
-        consumo_acumulado_hoje = consumo_por_hora.cumsum()
+        # Filtrar dados
+        media_acumulada_historica = historico[historico["data"] < today].groupby("hora")["quantidade_ml"].mean().cumsum()
+        consumo_acumulado_hoje = historico[historico["data"] == today].groupby("hora")["quantidade_ml"].sum().cumsum()
 
         # Criar o gráfico interativo com Plotly
-        fig = go.Figure()
+        fig_acumulado = go.Figure()
 
         # Linha de consumo acumulado de hoje
-        fig.add_trace(go.Scatter(
+        fig_acumulado.add_trace(go.Scatter(
             x=consumo_acumulado_hoje.index,
             y=consumo_acumulado_hoje.values,
             mode='lines+markers',
@@ -187,7 +177,7 @@ if usuario_id and filtrar:
         ))
 
         # Linha da média acumulada histórica
-        fig.add_trace(go.Scatter(
+        fig_acumulado.add_trace(go.Scatter(
             x=media_acumulada_historica.index,
             y=media_acumulada_historica.values,
             mode='lines+markers',
@@ -196,21 +186,23 @@ if usuario_id and filtrar:
         ))
 
         # Ajustar layout
-        fig.update_layout(
-            xaxis_title='Hora',
-            yaxis_title='Consumo Acumulado (ml)',
-            xaxis=dict(tickmode='linear'),
-            template='plotly_white',
+        fig_acumulado.update_layout(
+            title="Consumo Acumulado por Hora: Hoje x Média",
+            xaxis_title="Hora",
+            yaxis_title="Consumo Acumulado (ml)",
+            xaxis=dict(tickmode="linear"),
+            template="plotly_white",
             legend=dict(
-                orientation="h",  # Horizontal
-                yanchor="bottom", 
-                y=1.05,  # Posição acima do gráfico
+                orientation="h",  
+                yanchor="bottom",
+                y=1.05,
                 xanchor="center",
                 x=0.5
             )
         )
 
-        fig.show()
+        # Exibir no Streamlit
+        st.plotly_chart(fig_acumulado)
 
 
 # 🏆 Ranking Semanal de Consumo
